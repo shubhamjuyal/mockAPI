@@ -8,6 +8,8 @@ app.use(bodyParser.json());
 let mockEndpoints = [];
 
 function findMockEndpoint(method, path) {
+    console.log("mthod: ", method);
+    console.log("path: ", path);
     return mockEndpoints.find(endpoint => endpoint.method === method && endpoint.path === path);
 }
 
@@ -29,8 +31,9 @@ app.post('/mock', (req, res) => {
 
 app.all('*', (req, res) => {
     const endpoint = findMockEndpoint(req.method, req.path);
+    console.log("endpoint: ", endpoint);
     if (endpoint) {
-        return res.status(endpoint.response.status || 200).json(endpoint.response.body);
+        return res.status(endpoint.response.status || 200).json(endpoint.response);
     }
     res.status(404).json({ error: 'Endpoint not found' });
 });
