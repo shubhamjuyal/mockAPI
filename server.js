@@ -11,6 +11,22 @@ function findMockEndpoint(method, path) {
     return mockEndpoints.find(endpoint => endpoint.method === method && endpoint.path === path);
 }
 
+app.post('/mock', (req, res) => {
+    const { method, path, response } = req.body;
+
+    if (!method || !path || !response) {
+        return res.status(400).json({ error: 'Method, path, and response are required' });
+    }
+
+    const existingEndpoint = findMockEndpoint(method, path);
+    if (existingEndpoint) {
+        return res.status(400).json({ error: 'Endpoint already exists' });
+    }
+
+    mockEndpoints.push({ method, path, response });
+    res.status(201).json({ message: 'Mock endpoint created' });
+});
+
 app.all('*', (req, res) => {
     const endpoint = findMockEndpoint(req.method, req.path);
     if (endpoint) {
